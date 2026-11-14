@@ -1,0 +1,243 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Design tokens: one set per theme, components only ever use the semantic names ---- */
+:root {
+  --background: #f3f6fb;
+  --surface: #ffffff;
+  --surface-2: #eaf0f8;
+  --line: #d3deec;
+  --line-strong: #b4c5dc;
+  --foreground: #0a1424;
+  --muted: #41536f;
+  --subtle: #5a6c88;
+  --brand: #0369a1;
+  --brand-ink: #ffffff;
+  --brand-soft: rgb(3 105 161 / 0.1);
+  --allow: #047857;
+  --allow-ink: #ffffff;
+  --allow-soft: rgb(4 120 87 / 0.1);
+  --review: #9a4a07;
+  --review-soft: rgb(154 74 7 / 0.1);
+  --deny: #be123c;
+  --deny-soft: rgb(190 18 60 / 0.08);
+  --scrim: rgb(6 14 28 / 0.5);
+  --grid: rgb(10 20 36 / 0.05);
+  --glow: rgb(3 105 161 / 0.12);
+  --shadow: 0 1px 2px rgb(10 20 36 / 0.06), 0 8px 24px -12px rgb(10 20 36 / 0.12);
+}
+
+.dark {
+  --background: #050912;
+  --surface: #0a1120;
+  --surface-2: #0f1a2f;
+  --line: #1a2a47;
+  --line-strong: #2a4470;
+  --foreground: #e8eef9;
+  --muted: #9db0cf;
+  --subtle: #7387ab;
+  --brand: #38bdf8;
+  --brand-ink: #04121f;
+  --brand-soft: rgb(56 189 248 / 0.12);
+  --allow: #34d399;
+  --allow-ink: #03150e;
+  --allow-soft: rgb(52 211 153 / 0.12);
+  --review: #fbbf24;
+  --review-soft: rgb(251 191 36 / 0.12);
+  --deny: #fb7185;
+  --deny-soft: rgb(251 113 133 / 0.12);
+  --scrim: rgb(0 0 0 / 0.6);
+  --grid: rgb(120 160 220 / 0.05);
+  --glow: rgb(56 189 248 / 0.1);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.7);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-allow: var(--allow);
+  --color-allow-ink: var(--allow-ink);
+  --color-allow-soft: var(--allow-soft);
+  --color-review: var(--review);
+  --color-review-soft: var(--review-soft);
+  --color-deny: var(--deny);
+  --color-deny-soft: var(--deny-soft);
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow-card: var(--shadow);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  button,
+  a,
+  select,
+  input,
+  textarea,
+  [role='radio'],
+  summary {
+    touch-action: manipulation;
+  }
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  select:not(:disabled),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--brand);
+    color: var(--brand-ink);
+  }
+}
+
+/* Ambient background: faint grid and a soft top glow. Decorative only. */
+.app-bg {
+  position: relative;
+  isolation: isolate;
+}
+.app-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 28rem at 70% -8%, var(--glow), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 70% at 60% 0%, #000 30%, transparent 85%);
+}
+
+/* Striped fill gives "approval required" a non-colour cue in charts. */
+.stripe-review {
+  background-image: repeating-linear-gradient(135deg, rgb(0 0 0 / 0.28) 0 2px, transparent 2px 6px);
+  background-color: var(--review);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rise {
+  animation: rise 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.animate-overlay {
+  animation: overlay-in 180ms ease-out both;
+}
+.animate-dialog {
+  animation: dialog-in 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%) 0 0 / 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (max-width: 639px) {
+  .animate-dialog {
+    animation: sheet-in 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
