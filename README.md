@@ -21,6 +21,18 @@ NEAR Hackathon 2026 · solo project.
 
 Needs Node 20+ (tested on 22). Rust is only needed for the contract.
 
+Create the backend's local environment file from the checked-in template:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+The template starts with `SEED=false` (an empty database). Set it to `true` if
+you want the demo agents and sample history. With the NEAR account, private key
+and contract ID left blank, the app uses simulated mode. To enable live testnet
+writes, fill in those values in `backend/.env`; never commit that local file or
+share the private key.
+
 ```bash
 npm run install:all
 npm start            # builds the dashboard, serves everything on http://localhost:4000
@@ -33,7 +45,7 @@ npm run dev:backend    # http://localhost:4000
 npm run dev:frontend   # http://localhost:5173 (proxies /api)
 ```
 
-First run seeds three demo agents with history and pending approvals. Set `SEED=false` in `backend/.env` for an empty database.
+When `SEED=true`, the first run seeds three demo agents with history and pending approvals.
 
 Tests:
 
@@ -55,9 +67,8 @@ near create-account agentguard.<you>.testnet --useFaucet
 near deploy agentguard.<you>.testnet target/near/agentguard_contract.wasm
 near call agentguard.<you>.testnet new '{"writer":"writer.<you>.testnet"}' --accountId agentguard.<you>.testnet
 
-# 2. Give the backend its writer credentials
-cp backend/.env.example backend/.env
-# fill NEAR_ACCOUNT_ID, NEAR_PRIVATE_KEY, NEAR_CONTRACT_ID
+# 2. Give the backend its writer credentials in backend/.env
+# Set NEAR_ACCOUNT_ID, NEAR_PRIVATE_KEY and NEAR_CONTRACT_ID
 ```
 
 The writer private key stays server-side. The dashboard then shows real transaction links to the NEAR explorer. I could not deploy to testnet from the build environment, so the live path is implemented but has not been exercised against a real network. Run one request and check the explorer link before you demo it.
