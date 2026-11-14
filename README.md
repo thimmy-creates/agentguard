@@ -55,7 +55,7 @@ npm test    # policy engine + hashing (backend), contract unit tests (cargo)
 
 ## NEAR: simulated vs live
 
-With no NEAR credentials the backend runs in **simulated mode**. Receipts are still canonicalised and SHA-256 hashed and stored, but nothing leaves your machine, and transaction references are prefixed `sim_` and labelled **Simulated** everywhere in the UI. This is deliberate: a demo should never pass off a fake transaction as a real one.
+Unless all three NEAR writer values (`NEAR_ACCOUNT_ID`, `NEAR_PRIVATE_KEY` and `NEAR_CONTRACT_ID`) are configured, the backend runs in **simulated mode**. Receipts are still canonicalised and SHA-256 hashed and stored locally, but nothing is written to NEAR, and transaction references are prefixed `sim_` and labelled **Simulated** in the UI. Keep this mode documented: it makes local demos easy to run and clearly distinguishes simulated receipts from real on-chain writes. The gateway's allowed actions use mock adapters in either mode; no real external data is read, sent or deleted.
 
 To go live on testnet:
 
@@ -97,6 +97,12 @@ A stored hash is evidence that a decision was recorded. It is not proof that an 
 
 ## Call the gateway as an agent
 
+Start the app, open **Agents**, and register an agent with a policy preset. Copy
+its agent ID and one-time API key when they are shown; the key cannot be viewed
+again. With the default `SEED=false`, the database starts empty, so register an
+agent yourself. This API example sends a request as that agent (it does not
+start or prompt an AI model):
+
 ```bash
 curl -X POST http://localhost:4000/api/gateway/request \
   -H "x-agent-key: <key shown once at registration>" \
@@ -104,7 +110,10 @@ curl -X POST http://localhost:4000/api/gateway/request \
   -d '{"agent_id":"agt_xxxx","action":"export_workspace_data","params":{"records":340}}'
 ```
 
-Responses: `200` allowed and executed, `202` queued for approval, `403` denied, `401` bad agent key.
+Depending on the agent's policy and the request's risk, the gateway allows the
+request (`200`), queues it for human approval (`202`), or denies it (`403`).
+An invalid agent ID or key returns `401`. Allowed requests invoke only a mock
+tool adapter; review and deny outcomes do not run the action.
 Actions: `read_project_data`, `create_project_tasks`, `export_workspace_data`, `delete_project_records`, `send_external_messages`.
 
 ## Structure
